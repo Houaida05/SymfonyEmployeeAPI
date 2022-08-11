@@ -1,0 +1,12 @@
+f9c71f,172.18.0.1,GET,http://localhost:5000/,1660213150,3c3163,500
+3c3163,172.18.0.1,GET,http://localhost:5000/,1660213159,,500
+2e2017,172.18.0.1,GET,http://localhost:5000/,1660213167,,404
+9953e2,172.18.0.1,GET,http://localhost:5000/,1660214271,,404
+3dd055,172.18.0.1,GET,http://localhost:5000/,1660214275,,404
+4abeaf,172.18.0.1,GET,http://localhost:5000/api/doc,1660215599,ea9b22,500
+22e0bf,172.18.0.1,GET,http://localhost:5000/api/doc,1660215599,9d8afc,500
+9d8afc,172.18.0.1,GET,http://localhost:5000/api/doc,1660215602,,500
+ea9b22,172.18.0.1,GET,http://localhost:5000/api/doc,1660215602,,500
+6206a8,172.18.0.1,GET,http://localhost:5000/api/employees,1660215604,6b7333,500
+6b7333,172.18.0.1,GET,http://localhost:5000/api/employees,1660215605,,500
+e6886b,172.18.0.1,GET,http://localhost:5000/api/doc,1660215614,,200

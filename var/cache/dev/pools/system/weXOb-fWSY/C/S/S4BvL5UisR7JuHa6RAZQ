@@ -1,0 +1,70 @@
+<?php //App%255CController%255CEmployeeController%2523showAction
+
+return [PHP_INT_MAX, static function () { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['OpenApi\\Annotations\\Response'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('OpenApi\\Annotations\\Response')),
+        clone ($p['OpenApi\\Context'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('OpenApi\\Context')),
+        clone ($p['OpenApi\\Loggers\\DefaultLogger'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('OpenApi\\Loggers\\DefaultLogger')),
+        clone ($p['FOS\\RestBundle\\Controller\\Annotations\\Get'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('FOS\\RestBundle\\Controller\\Annotations\\Get')),
+    ],
+    null,
+    [
+        'stdClass' => [
+            'response' => [
+                200,
+            ],
+            'description' => [
+                'Returns the rewards of an user',
+            ],
+            '_context' => [
+                $o[1],
+            ],
+            'logger' => [
+                1 => $o[2],
+            ],
+            'filename' => [
+                1 => '/var/www/html/symfonyBackend/vendor/doctrine/annotations/lib/Doctrine/Common/Annotations/DocParser.php',
+            ],
+            'line' => [
+                1 => 1474,
+            ],
+            'method' => [
+                1 => 'instantiateAnnotiation',
+            ],
+            'class' => [
+                1 => 'DocParser',
+            ],
+            'namespace' => [
+                1 => 'Doctrine\\Common\\Annotations',
+            ],
+            'annotations' => [
+                1 => [
+                    $o[0],
+                ],
+            ],
+        ],
+        'Symfony\\Component\\Routing\\Annotation\\Route' => [
+            'path' => [
+                3 => '/api/employees/{id}',
+            ],
+            'name' => [
+                3 => 'employee_show',
+            ],
+            'requirements' => [
+                3 => [
+                    'id' => '\\d+',
+                ],
+            ],
+            'methods' => [
+                3 => [
+                    'GET',
+                ],
+            ],
+        ],
+    ],
+    [
+        $o[0],
+        $o[3],
+    ],
+    []
+); }];

@@ -1,0 +1,34 @@
+<?php
+
+use Symfony\Component\Translation\MessageCatalogue;
+
+$catalogue = new MessageCatalogue('de', array (
+  'pagerfanta' => 
+  array (
+    'Previous' => 'Vorherige',
+    'Next' => 'Nächste',
+  ),
+  'KnpPaginatorBundle' => 
+  array (
+    'label_previous' => 'Vorherige',
+    'label_next' => 'Nächste',
+    'filter_searchword' => 'Suchbegriff...',
+  ),
+));
+
+$catalogueEn = new MessageCatalogue('en', array (
+  'pagerfanta' => 
+  array (
+    'Previous' => 'Previous',
+    'Next' => 'Next',
+  ),
+  'KnpPaginatorBundle' => 
+  array (
+    'label_previous' => 'Previous',
+    'label_next' => 'Next',
+    'filter_searchword' => 'Searchword...',
+  ),
+));
+$catalogue->addFallbackCatalogue($catalogueEn);
+
+return $catalogue;
