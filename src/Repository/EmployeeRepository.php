@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Employee;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 
 /**
  * @extends ServiceEntityRepository<Employee>
@@ -38,6 +40,35 @@ class EmployeeRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function findAllPaginated($filter='',$limit, int $page, array $sorting = array())
+    {
+        $fields = array_keys($this->getClassMetadata()->fieldMappings);
+        $queryBuilder =  $this->createQueryBuilder('employee');
+        if ($filter) {
+            $queryBuilder->andWhere('employee.lastname LIKE :filter OR employee.firstname LIKE :filter')
+                ->setParameter('filter', '%' . $filter . '%');
+        }
+
+        foreach ($fields as $field) {
+            if (isset($sorting[$field])) {
+                $direction = ($sorting[$field] === 'asc') ? 'asc' : 'desc';
+                $queryBuilder->addOrderBy('employee.'.$field, $direction);
+            }
+            else
+                $queryBuilder->addOrderBy('employee.id' ,'asc') ;
+
+
+        }
+
+        $pagerAdapter = new QueryAdapter($queryBuilder);
+        $pager = new Pagerfanta($pagerAdapter);
+        $pager->setMaxPerPage($limit);
+        $pager->setCurrentPage($page);
+        return $pager;
+    }
+
+
 
 //    /**
 //     * @return Employee[] Returns an array of Employee objects

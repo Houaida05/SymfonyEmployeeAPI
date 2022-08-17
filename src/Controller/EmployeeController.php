@@ -10,14 +10,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Exception\NotValidCurrentPageException;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
-
 
 
 class EmployeeController extends AbstractFOSRestController
@@ -26,15 +29,16 @@ class EmployeeController extends AbstractFOSRestController
     private $employeeRepository;
     private $entityManager;
     private $validator;
-    public function __construct(SerializerInterface $serializer,
-                                EmployeeRepository $employeeRepository,
+
+    public function __construct(SerializerInterface    $serializer,
+                                EmployeeRepository     $employeeRepository,
                                 EntityManagerInterface $entityManager,
-                                ValidatorInterface $validator)
+                                ValidatorInterface     $validator)
     {
         $this->employeeRepository = $employeeRepository;
         $this->serializer = $serializer;
         $this->entityManager = $entityManager;
-        $this->validator= $validator;
+        $this->validator = $validator;
     }
 
     /**
@@ -49,9 +53,16 @@ class EmployeeController extends AbstractFOSRestController
      */
     public function showAction(string $id)
     {
-        return $this->view(
-            $this->employeeRepository->find($id)
-        );
+        $employee = $this->employeeRepository->find($id);
+        if (!$employee) {
+            return $this->handleView($this->view(
+                [
+                    'status' => 'Record Not Found',
+                ], Response::HTTP_NOT_FOUND
+            ));
+        } else
+            return $this->view($employee);
+
     }
 
     /**
@@ -60,32 +71,48 @@ class EmployeeController extends AbstractFOSRestController
      *     name="employee_list",
      *     )
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        return $this->view($this->employeeRepository->findAll());
+        /*  $page = $request->query->get('page', 1);
+          $qb = $this->employeeRepository->findAllPage();
+          $pagerAdapter = new QueryAdapter($qb);
+          $pager = new Pagerfanta($pagerAdapter);
+          $pager->setMaxPerPage(2);
+          $pager->setCurrentPage($page);*/
+        $limit = $request->query->getInt('limit', 4);
+        $page = $request->query->getInt('page', 1);
+        $sorting = $request->query->get('sorting', array());
+        $filter = $request->query->get('filter','');
+        $employees = $this->employeeRepository->findAllPaginated($filter,$limit, $page, $sorting);
+        //return $this->view($employees);
+        //$employees = $this->employeeRepository->findAll();
+        if (!$employees) {
+            return $this->handleView($this->view(
+                [
+                    'status' => 'Not Records Found',
+                ], Response::HTTP_NOT_FOUND
+            ));
+        } else
+            return $this->view($employees);
     }
     /*
-$employees=$this->employeeRepository->findAll();
-$pagination = $this->paginator->paginate($employees, $request->get('page', 1),
-$request->query->getInt('limit', 1));
-$view = $this->view($pagination);
-return $view;*/
+    $employees=$this->employeeRepository->findAll();
+    $pagination = $this->paginator->paginate($employees, $request->get('page', 1),
+    $request->query->getInt('limit', 1));
+    $view = $this->view($pagination);
+    return $view;*/
 
     /**
      * @Rest\Post(
      *     path="/api/employees",
      *     name="employee_create",
-     *
      *     )
      */
     public function createAction(Request $request): Response
     {
+
         $form = $this->createForm(EmployeeType::class, new Employee());
         $form->submit($request->request->all());
-        /*   if (!$form->isSubmitted()|| !$form->isValid()){
-               print 'Error';
-               exit;
-           }*/
         if (false === $form->isValid()) {
             return $this->handleView(
                 $this->view($form)
@@ -93,6 +120,7 @@ return $view;*/
         }
         $this->entityManager->persist($form->getData());
         $this->entityManager->flush();
+
         return $this->handleView($this->view(
             [
                 'status' => 'ok',
@@ -100,8 +128,9 @@ return $view;*/
         ));
     }
 
+
     /**
-     * @Rest\PUT(
+     * @Rest\Put(
      *     path="/api/employees/{id}",
      *     name="employee_update",
      *     requirements={"id"="\d+"}
@@ -125,7 +154,7 @@ return $view;*/
     }
 
     /**
-     * @Rest\DELETE(
+     * @Rest\Delete(
      *     path="/api/employees/{id}",
      *     name="employee_delete",
      *     requirements={"id"="\d+"}
@@ -134,11 +163,22 @@ return $view;*/
     public function deleteAction(string $id)
     {
         $employee = $this->employeeRepository->find($id);
+        if (!$employee) {
+            return $this->handleView($this->view(
+                [
+                    'status' => 'Record Not Found',
+                ], Response::HTTP_NOT_FOUND
+            ));
+        } else {
+            $this->entityManager->remove($employee);
+            $this->entityManager->flush();
 
-        $this->entityManager->remove($employee);
-        $this->entityManager->flush();
-
-        return $this->view(null, Response::HTTP_NO_CONTENT);
+            return $this->handleView($this->view(
+                [
+                    'status' => 'Deleted',
+                ], Response::HTTP_OK
+            ));
+        }
     }
 
 }

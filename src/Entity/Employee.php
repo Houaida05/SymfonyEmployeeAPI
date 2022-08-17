@@ -17,25 +17,32 @@ class Employee
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"list"})
-     * @Assert\NotBlank
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Serializer\Groups({"list","detail"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max= 30)
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Serializer\Groups({"list","detail"})
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max= 30)
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=50, unique=true)
      * @Serializer\Groups({"list","detail"})
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not valid."
+     * )
      */
     private $email;
 
